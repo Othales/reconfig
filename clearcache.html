@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RR Flow API : Cache</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">    
+    <link rel="icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">    
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+    </style>
+    <script>
+        const maxAttempts = 2; // Número máximo de tentativas
+        const delay = 2000; // Tempo de espera entre as tentativas (em milissegundos)
+
+        let attempts = 0;
+
+        function checkAdmin() {
+            attempts++;
+            if (attempts <= maxAttempts) {
+                fetch('/admin', { method: 'HEAD' })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.href = "/admin";
+                        } else {
+                            setTimeout(checkAdmin, delay);
+                        }
+                    })
+                    .catch(() => {
+                        setTimeout(checkAdmin, delay);
+                    });
+            } else {
+                console.log("Max attempts reached, redirecting anyway.");
+                window.location.href = "/admin";
+            }
+        }
+        window.onload = function() {
+            setTimeout(checkAdmin, 3000); 
+        };
+    </script>
+</head>
+<body>
+    <div class="container text-center">
+        <h1>Removendo Cache</h1>
+        <p>Por favor, aguarde...</p>
+        <div class="spinner-border text-info" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RR Flow API : Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">    
+    <link rel="icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">    
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            color: #282c4d;
+        }        
+        .login-form {
+            margin: auto;
+            margin-top: 100px;
+            max-width: 400px;
+            padding: 20px;
+            border: 1px solid #d3d3d3;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-form">
+            <div class="logo">
+                <a href="https://rrflow.com.br" target="_blank">
+                    <img src="{{ url_for('static', filename='rr-flow-logo.png') }}" alt="RR FLOW API" width="300">
+                </a>
+            </div>
+            <!-- <h4 class="text-center">Autenticação <i class="fa-solid fa-key"></i></h4> -->
+            <form method="post">
+                <div class="form-group text-center">
+                    <h4>Painel de Administração</h4>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Senha de autenticação" required>
+                </div>
+                {% if error %}
+                    <div class="alert alert-danger text-center" role="alert">
+                        {{ error }}
+                    </div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary btn-block">Entrar <i class="fa-solid fa-right-to-bracket"></i></button>
+            </form>
+            <div class="text-center" style="margin-bottom: -10px; margin-top: 15px;"><a target="_blank" href="https://remontti.com.br"><img src="{{ url_for('static', filename='byremontti.svg') }}" style="max-width: 151px;" alt="Por Rudimar Remontti"></a></div>
+        </div>
+        <div class="text-center">            
+            <p> <br> Status API: {{ situacao|safe }} <br>
+            <p><small>{{ versao }} </small></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RR Flow API : Serviços</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">    
+    <link rel="icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">    
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">
+    <style>
+        html, body {
+            background-color: #f8f9fa;
+            color: #282c4d;
+        }
+        .menu-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #282c4d;
+        }
+        .foo {
+            padding-top: 20px;
+            padding-bottom: 15px;
+        }
+        .log {
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="menu-container">
+            <a href="/admin"><img src="{{ url_for('static', filename='rr-flow-logo.png') }}" alt="RR FLOW API" width="200"></a>
+            <div class="menu-links">
+                <a href="/admin" class="btn btn-info btn-sm">Voltar &nbsp;<i class="far fa-arrow-alt-circle-left"></i></a>
+                &nbsp; &nbsp; &nbsp;
+                <a href="/logout" class="btn btn-danger btn-sm">Logout &nbsp;<i class="fas fa-power-off"></i></a>
+            </div>
+        </div>
+    </div>        
+
+    <div class="container mt-4">
+        <h4 class="mb-4"><i class="fa-solid fa-bug"></i> Logs</h4>
+        <div class="row">
+          
+            <pre class="log" >{{ saidalog }}</pre>
+                       
+        </div>
+        <br/>
+        <br/>
+        <div class="text-center foo"><a target="_blank" href="https://remontti.com.br"><img src="{{ url_for('static', filename='byremontti.svg') }}" style="max-width: 151px;" alt="Por Rudimar Remontti"></a></div>
+    </div>
+    <div class="text-center">
+        <small>{{ versao }}</small>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ app_name }} : Editando {{ filename }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">
+    <style>
+        html, body {
+            background-color: #f8f9fa;
+            color: #282c4d;
+        }
+        .menu-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #282c4d;
+        }
+        .foo {
+            padding-top: 20px;
+            padding-bottom: 15px;
+        }
+        /* body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        } */
+        h1 {
+            text-align: center;
+        }
+        #editorContainer {
+            width: 100%;
+            /* max-width: 900px; */
+            margin: 0 auto;
+        }
+        #jsonEditor {
+            width: 100%;
+            height: 500px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #feedbackMessage {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .success {
+            color: #008000;
+        }
+        .error {
+            color: #FF0000;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="menu-container">
+            <a href="/admin"><img src="{{ url_for('static', filename='rr-flow-logo.png') }}" alt="RR FLOW API" width="200"></a>
+            <div class="menu-links">
+                <a href="/admin" class="btn btn-info btn-sm">Voltar &nbsp;<i class="far fa-arrow-alt-circle-left"></i></a>
+                &nbsp; &nbsp; &nbsp;
+                <a href="/logout" class="btn btn-danger btn-sm">Logout &nbsp;<i class="fas fa-power-off"></i></a>
+            </div>
+        </div>
+
+        <div id="editorContainer" class="container mt-4">
+            <div>
+                <i class="fas fa-edit"></i> Editando <span class="text-danger">{{ filename }}</span>
+            </div>
+            <br />
+            <div id="jsonEditor"></div>
+            <br />
+            <div class="text-center">
+                <a href="/admin" class="btn btn-danger">Cancelar &nbsp;<i class="far fa-window-close"></i></a> &nbsp;&nbsp;
+                <button class="btn btn-success" onclick="saveChanges()">Salvar &nbsp;<i class="far fa-save"></i></button>
+            </div>
+            <div id="feedbackMessage"></div>
+        </div>
+
+        <div class="text-center foo"><a target="_blank" href="https://remontti.com.br"><img src="{{ url_for('static', filename='byremontti.svg') }}" style="max-width: 151px;" alt="Por Rudimar Remontti"></a></div>
+    </div>
+    <div class="text-center">
+        <small>{{ version }}</small>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.4/ace.js"></script>
+    <script>
+        // Inicializa o editor Ace
+        var editor = ace.edit("jsonEditor");
+        editor.setTheme("ace/theme/github");
+        editor.getSession().setMode("ace/mode/json");
+        /*ace/theme/monokai: Monokai (tema padrão)
+        ace/theme/github: GitHub
+        ace/theme/twilight: Twilight
+        ace/theme/tomorrow: Tomorrow
+        ace/theme/kuroir: Kuroir
+        */
+
+        // Carrega o JSON inicial no editor
+        const jsonData = {{ data | tojson | safe }};
+        editor.setValue(JSON.stringify(jsonData, null, 4));
+
+        // Função para salvar as alterações no arquivo JSON
+        function saveChanges() {
+            const updatedData = editor.getValue();
+            try {
+                const parsedData = JSON.parse(updatedData);
+                fetch('/save/{{ filename }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(parsedData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const feedbackMessage = document.getElementById('feedbackMessage');
+                    if (data.error) {
+                        feedbackMessage.className = 'error';
+                        feedbackMessage.innerText = `Erro de sintaxe no JSON: ${data.message}`;
+                    } else {
+                        feedbackMessage.className = 'success';
+                        feedbackMessage.innerText = 'Arquivo JSON salvo com sucesso!';
+                    }
+                })
+                .catch(error => console.error('Erro ao salvar:', error));
+            } catch (error) {
+                const feedbackMessage = document.getElementById('feedbackMessage');
+                feedbackMessage.className = 'error';
+                feedbackMessage.innerText = `Erro de sintaxe no JSON: ${error.message}`;
+            }
+        }
+
+        // Função para voltar à página de seleção de arquivos
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ app_name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+    </style>
+    <script>
+        // Redirecionar após 3 segundos
+        setTimeout(function() {
+            window.location.href = "/grafana";
+        }, 1000);
+    </script>
+</head>
+<body>
+    <div class="container">
+        {% if status == True %}
+            <div class="alert alert-success text-center" role="alert">
+                <i class="fa-solid fa-file-import fa-beat" style="font-size: 82px; margin-top: -35px;"></i>
+                <h1 style="margin-top: 25px;">Dashboard importada com sucesso!</h1>
+                <p>Redirecionando de volta.</p>
+            </div>
+        {% elif status == "info" %}
+            <div class="alert alert-info text-center" role="alert">
+                <i class="fa-solid fa-chart-simple fa-beat" style="font-size: 82px; margin-top: -35px;"></i>
+                <h1 style="margin-top: 25px;">Todas Dashboard importadas com sucesso!</h1>
+                <p>Redirecionando de volta.</p>
+            </div>
+        {% elif status == "info_error" %}
+            <div class="alert alert-danger text-center" role="alert">
+                <i class="fa-solid fa-skull-crossbones fa-beat" style="font-size: 82px; margin-top: -35px;"></i>
+                <h1 style="margin-top: 25px;">Falha ao acessar o Grafana!</h1>
+                <p>Redirecionando de volta.</p>
+            </div>
+        {% else %}
+            <div class="alert alert-danger text-center" role="alert">
+                <i class="fa-solid fa-skull-crossbones fa-beat" style="font-size: 82px; margin-top: -35px;"></i>
+                <h1 style="margin-top: 25px;">Dashboard deletado com sucesso!</h1>
+                <p>Redirecionando de volta.</p>
+            </div>
+        {% endif %}
+
+    </div>
+</body>
+</html>

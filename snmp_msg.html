@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RR Flow API</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">    
+    <link rel="icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">    
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+    </style>
+    <script>
+        // Redirecionar após 3 segundos
+        setTimeout(function() {
+            window.location.href = "/snmp";
+        }, 60000);
+    </script>
+</head>
+<body>
+    <div class="container">        
+        <div class="alert alert-info text-center" role="alert">
+            <i class="fa-solid fa-gear fa-beat" style="font-size: 82px; margin-top: -35px;"></i>
+            <h1 style="margin-top: 25px;"> {{ html_mesagem }} </h1>
+            <p>Para as conexões snmp que falharem, serão gerados exemplos de configuração, você pode personalizar como achar melhor.</p>            
+        </div>
+        <div class="text-center">
+            <a href="/snmp" class="btn btn-primary">Voltar</a>
+        </div>
+    </div>
+</body>
+</html>

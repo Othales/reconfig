@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RR Flow API : Grafana</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">    
+    <link rel="icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">    
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">
+    <style>
+        html, body {
+            background-color: #f8f9fa;
+            color: #282c4d;
+        }
+        .menu-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #282c4d;
+        }
+        .foo {
+            padding-top: 20px;
+            padding-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="menu-container">
+            <a href="/admin"><img src="{{ url_for('static', filename='rr-flow-logo.png') }}" alt="RR FLOW API" width="200"></a>
+            <div class="menu-links">
+                <a href="/admin" class="btn btn-info btn-sm">Voltar &nbsp;<i class="far fa-arrow-alt-circle-left"></i></a>
+                &nbsp; &nbsp; &nbsp;
+                <a href="/logout" class="btn btn-danger btn-sm">Logout &nbsp;<i class="fas fa-power-off"></i></a>
+            </div>
+        </div>
+    </div>        
+    <div class="container mt-4">
+        <div class="row mt-4">
+            <div class="col-md-8">
+                <small>
+                    <strong>Service account token:</strong> {{ grafana_service_token }}<br/>
+                    <strong>Datasource (JSON API):</strong> {{ grafana_datasources }}<br/>
+                    <strong>Grafana URL:</strong> {{ grafana_url }}
+                </small> 
+            </div>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var grafanaUrl = "{{ grafana_url }}";
+                    var grafanaForm = document.getElementById("grafana-form");
+            
+                    if (
+                        grafanaUrl !== "http://localhost:3000" &&
+                        grafanaUrl !== "http://[::1]:3000" &&
+                        grafanaUrl !== "http://127.0.0.1:3000"
+                    ) {
+                        grafanaForm.style.display = "none";
+                    }
+                });
+            </script>         
+            <div class="col-md-4">
+                <form id="grafana-form" action="/grafana/dash/killemall">
+                    <button type="submit" class="btn btn-warning btn-lg float-md-right">Remover e Reinstalar Todas &nbsp;<i class="fas fa-file-import"></i></button>
+                </form>
+            </div>
+        </div>
+
+        <ul class="list-group mt-4">
+            <li class="list-group-item text-center">
+                <h4><i class="fas fa-chart-line"></i> Grafana Dashboards</h4>
+                <small>Ao reinstalar as Dashboards, elas são substituídas, <b><span style="color: red;">resultando na perda de quaisquer alterações</span></b> que você tenha realizado anteriormente.</small>
+            </li>
+            {% for dashboard_name, dashboard_uid in dashboard_uids.items() %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-chart-area"></i> &nbsp; {{ dashboard_name }}
+                    <br>
+                    <strong><small>{{ dashboard_uid }}</small></strong>
+                </div>
+                <div>
+                    <a class="btn btn-danger btn-sm ml-2" href="/grafana/dash/delete/{{ dashboard_uid }}">
+                        Deletar &nbsp;<i class="fas fa-skull-crossbones"></i>
+                    </a>
+                    <a class="btn btn-primary btn-sm ml-2" href="/grafana/download_dash/{{ dashboard_name }}.json">
+                        Download &nbsp;<i class="fa-regular fa-floppy-disk"></i>
+                    </a>
+                    <a class="btn btn-success btn-sm ml-2" href="/grafana/dash/install/{{ dashboard_name }}">
+                        Instalar &nbsp;<i class="fas fa-file-import"></i>
+                    </a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="text-center foo"><a target="_blank" href="https://remontti.com.br"><img src="{{ url_for('static', filename='byremontti.svg') }}" style="max-width: 151px;" alt="Por Rudimar Remontti"></a></div>
+    </div>
+    <div class="text-center">
+        <small>{{ versao }}</small>
+    </div>
+
+    <!-- Carregue a versão completa do jQuery e o Bootstrap JS aqui -->
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RR Flow API : SNMP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}" type="image/x-icon">    
+    <link rel="icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">    
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon-dark.png') }}" type="image/x-icon" media="(prefers-color-scheme: dark)">
+    <style>
+        html, body {
+            background-color: #f8f9fa;
+            color: #282c4d;
+        }
+        .menu-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #282c4d;
+        }
+        .foo {
+            padding-top: 20px;
+            padding-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="menu-container">
+            <a href="/admin"><img src="{{ url_for('static', filename='rr-flow-logo.png') }}" alt="RR FLOW API" width="200"></a>
+            <div class="menu-links">
+                <a href="/admin" class="btn btn-info btn-sm">Voltar &nbsp;<i class="far fa-arrow-alt-circle-left"></i></a>
+                &nbsp; &nbsp; &nbsp;
+                <a href="/logout" class="btn btn-danger btn-sm">Logout &nbsp;<i class="fas fa-power-off"></i></a>
+            </div>
+        </div>
+    </div>        
+
+    <div class="container mt-4">
+        <h4 class="text-center mb-4"><i class="fa-solid fa-database"></i> Escolha a  opção desejada (SNMP)</h4>
+        <div class="list-group align-items-center">
+            <br/>
+            <p><a href="/updateinterfacesnmp"class="btn btn-dark btn-lg"><i class="fa-solid fa-ethernet"></i>&nbsp;&nbsp; Obter dados de Interfaces</a></p>
+            <br/>
+            <p><a href="/updatepeersnmp"class="btn btn-dark btn-lg"><i class="fa-solid fa-cloud">&nbsp;&nbsp; </i>Obter dados de Peers</i></a></p>
+            <br/>       
+        </div>
+        <div class="list-group align-items-center">
+            <p>OBS: Ao clicar o conteúdo atual será sobreposto. Crie uma cópia dos dados antes se necessário.</p>
+        </div>
+        <div class="text-center foo"><a target="_blank" href="https://remontti.com.br"><img src="{{ url_for('static', filename='byremontti.svg') }}" style="max-width: 151px;" alt="Por Rudimar Remontti"></a></div>
+    </div>    
+    <div class="text-center">
+        <small>{{ versao }}</small>
+    </div>
+ 
+
+    <!-- Carregue a versão completa do jQuery e o Bootstrap JS aqui -->
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+
+</body>
+</html>
