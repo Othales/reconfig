@@ -1,0 +1,7 @@
+<svg width="200" height="200" viewBox="0 0 200 200">
+  <circle cx="100" cy="100" r="95" fill="#134EA8"></circle>
+
+  <line x1="104" y1="100" x2="121" y2="191" stroke="#051C47" stroke-width="4" stroke-linecap="square"></line>
+  <line x1="96" y1="100" x2="175" y2="155" stroke="#051C47" stroke-width="4" stroke-linecap="square"></line>
+  <circle cx="100" cy="100" r="14" fill="#051C47"></circle>
+</svg>
