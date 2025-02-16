@@ -24,7 +24,7 @@
         {
             "datasource": {
                 "type": "marcusolsson-json-datasource",
-                "uid": ""
+                "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
             },
             "description": "",
             "fieldConfig": {
@@ -78,7 +78,7 @@
                     "cacheDurationSeconds": 0,
                     "datasource": {
                         "type": "marcusolsson-json-datasource",
-                        "uid": ""
+                        "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
                     },
                     "fields": [
                         {
@@ -114,7 +114,7 @@
         {
             "datasource": {
                 "type": "marcusolsson-json-datasource",
-                "uid": ""
+                "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
             },
             "description": "",
             "fieldConfig": {
@@ -123,7 +123,7 @@
             },
             "gridPos": {
                 "h": 6,
-                "w": 12,
+                "w": 6,
                 "x": 12,
                 "y": 0
             },
@@ -143,7 +143,7 @@
                     "key": "",
                     "plugin": "AMap.Scale,AMap.ToolBar"
                 },
-                "getOption": "context.panel.data.series.map((s) => {\n  if (s.refId === \"A\") {\n    duration = s.fields.find((f) => f.name === \"first\").values;\n    packets = s.fields.find((f) => f.name === \"packets\").values;\n  }\n});\n\nconst uniqueDuration = [];\n\nfor (let i = 0; i < duration.length; i++) {\n  if (i === 0 || duration[i] !== duration[i - 1]) {\n    uniqueDuration.push(duration[i]);\n  }\n}\n\nduration = uniqueDuration;\n\nconst formatDate = (timestamp) => {\n  const date = new Date(timestamp);\n  const options = {\n    hour: \"2-digit\",\n    minute: \"2-digit\"\n  };\n  return date.toLocaleString(\"pt-BR\", options);\n};\n\nconst formattedduration = duration.map((timestamp) => formatDate(timestamp));\n\nfunction formatPont(value) {\n  return value.toLocaleString(\"pt-BR\");\n}\n\nreturn {\n  grid: {\n    containLabel: true,\n    left: \"2%\",\n    right: \"70px\",\n    top: \"45px\",\n    bottom: '3%',\n  },\n  legend: {\n    left: 'center'\n  },\n  series: [\n    {\n      smooth: true,\n      data: packets,\n      itemStyle: {\n        color: '#FF9100'\n      },      \n      markLine: {\n        data: [\n          {\n            name: \"Avg\",\n            type: \"average\"\n          }\n        ]\n      },\n      markPoint: {\n        data: [\n          {\n            name: \"Max\",\n            type: \"max\",\n            symbol: 'circle',\n            symbolSize: 10,\n            label: {\n              color: '#FFAB40',\n              position: [0, -15]\n            },\n            itemStyle: {\n              color: '#FFAB40',\n            }\n          },\n        ]\n      },\n      name: \"Pacotes\",\n      type: \"line\",\n\n      areaStyle: {\n        color: new context.echarts.graphic.LinearGradient(0, 0, 0, 1.2, [\n          {\n            offset: 0,\n            color: '#FFAB40'\n          },\n          {\n            offset: 1,\n            color: '#FFFF00'\n          }\n        ])\n      },\n\n    },\n\n\n  ],\n\n  tooltip: {\n    trigger: \"axis\"\n  },\n  xAxis: {\n    data: formattedduration,\n    boundaryGap: false,\n    type: \"category\",\n  },\n  yAxis: {\n\n    type: \"value\"\n  }\n};\n",
+                "getOption": "context.panel.data.series.map((s) => {\n  if (s.refId === \"A\") {\n    duration = s.fields.find((f) => f.name === \"first\").values;\n    packets = s.fields.find((f) => f.name === \"packets\").values;\n  }\n});\n\nconst uniqueDuration = [];\n\nfor (let i = 0; i < duration.length; i++) {\n  if (i === 0 || duration[i] !== duration[i - 1]) {\n    uniqueDuration.push(duration[i]);\n  }\n}\n\nduration = uniqueDuration;\n\nconst formatDate = (timestamp) => {\n  const date = new Date(timestamp);\n  const options = {\n    hour: \"2-digit\",\n    minute: \"2-digit\"\n  };\n  return date.toLocaleString(\"pt-BR\", options);\n};\n\nconst formattedduration = duration.map((timestamp) => formatDate(timestamp));\n\nfunction formatPont(value) {\n  return value.toLocaleString(\"pt-BR\");\n}\n\nreturn {\n  grid: {\n    containLabel: true,\n    left: \"2%\",\n    right: \"70px\",\n    top: \"45px\",\n    bottom: '3%',\n  },\n  legend: {\n    left: 'center'\n  },\n  series: [\n    {\n      smooth: true,\n      data: packets, // Mant\u00e9m os valores num\u00e9ricos para o gr\u00e1fico\n      itemStyle: {\n        color: '#FF9100'\n      },\n      markLine: {\n        data: [\n          {\n            name: \"Avg\",\n            type: \"average\"\n          }\n        ]\n      },\n      markPoint: {\n        data: [\n          {\n            name: \"Max\",\n            type: \"max\",\n            symbol: 'circle',\n            symbolSize: 10,\n            label: {\n              formatter: ({ value }) => Number(value).toLocaleString(\"pt-BR\"), // Formata o valor no r\u00f3tulo\n              color: '#FFAB40',\n              position: [0, -15]\n            },\n            itemStyle: {\n              color: '#FFAB40',\n            }\n          },\n        ]\n      },\n      name: \"Pacotes\",\n      type: \"line\",\n\n      areaStyle: {\n        color: new context.echarts.graphic.LinearGradient(0, 0, 0, 1.2, [\n          {\n            offset: 0,\n            color: '#FFAB40'\n          },\n          {\n            offset: 1,\n            color: '#FFFF00'\n          }\n        ])\n      },\n\n    },\n  ],\n\n  tooltip: {\n    trigger: \"axis\",\n    formatter: (params) => {\n      // Formata o valor no tooltip\n      const data = params[0];\n      const value = Number(data.value).toLocaleString(\"pt-BR\");\n      return `${data.marker}${data.seriesName}: ${value}`;\n    }\n  },\n  xAxis: {\n    data: formattedduration,\n    boundaryGap: false,\n    type: \"category\",\n  },\n  yAxis: {\n    type: \"value\",\n    minInterval: 1,\n    axisLabel: {\n      formatter: (value) => value.toLocaleString(\"pt-BR\") // Formata o eixo Y\n    }\n  }\n};\n",
                 "google": {
                     "callback": "gmapReady",
                     "key": ""
@@ -168,7 +168,7 @@
                     "cacheDurationSeconds": 300,
                     "datasource": {
                         "type": "marcusolsson-json-datasource",
-                        "uid": ""
+                        "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
                     },
                     "fields": [
                         {
@@ -197,8 +197,93 @@
         },
         {
             "datasource": {
+                "default": false,
                 "type": "marcusolsson-json-datasource",
-                "uid": ""
+                "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
+            },
+            "description": "",
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 6,
+                "x": 18,
+                "y": 0
+            },
+            "id": 11,
+            "interval": "5m",
+            "options": {
+                "baidu": {
+                    "callback": "bmapReady",
+                    "key": ""
+                },
+                "editor": {
+                    "format": "auto",
+                    "height": 600
+                },
+                "editorMode": "code",
+                "gaode": {
+                    "key": "",
+                    "plugin": "AMap.Scale,AMap.ToolBar"
+                },
+                "getOption": "context.panel.data.series.map((s) => {\n  if (s.refId === \"A\") {\n    duration = s.fields.find((f) => f.name === \"first\").values;\n    bpp = s.fields.find((f) => f.name === \"bpp\").values;\n  }\n});\n\nconst uniqueDuration = [];\n\nfor (let i = 0; i < duration.length; i++) {\n  if (i === 0 || duration[i] !== duration[i - 1]) {\n    uniqueDuration.push(duration[i]);\n  }\n}\n\nduration = uniqueDuration;\n\nconst formatDate = (timestamp) => {\n  const date = new Date(timestamp);\n  const options = {\n    hour: \"2-digit\",\n    minute: \"2-digit\"\n  };\n  return date.toLocaleString(\"pt-BR\", options);\n};\n\nconst formattedduration = duration.map((timestamp) => formatDate(timestamp));\n\nfunction formatPont(value) {\n  return value.toLocaleString(\"pt-BR\");\n}\n\nreturn {\n  grid: {\n    containLabel: true,\n    left: \"2%\",\n    right: \"70px\",\n    top: \"45px\",\n    bottom: '3%',\n  },\n  legend: {\n    left: 'center'\n  },\n  series: [\n    {\n      smooth: true,\n      data: bpp,\n      itemStyle: {\n        color: '#00E676'\n      },\n      markLine: {\n        data: [\n          {\n            name: \"Avg\",\n            type: \"average\"\n          }\n        ]\n      },\n      markPoint: {\n        data: [\n          {\n            name: \"Max\",\n            type: \"max\",\n            symbol: 'circle',\n            symbolSize: 10,\n            label: {\n              formatter: ({ value }) => Number(value).toLocaleString(\"pt-BR\"),\n              color: '#00E676',\n              position: [0, -15]\n            },\n            itemStyle: {\n              color: '#00E676',\n            }\n          },\n        ]\n      },\n      name: \"Bytes por pacote\",\n      type: \"line\",\n\n      areaStyle: {\n        color: new context.echarts.graphic.LinearGradient(0, 0, 0, 1.2, [\n          {\n            offset: 0,\n            color: '#00C853'\n          },\n          {\n            offset: 1,\n            color: '#C6FF00'\n          }\n        ])\n      },\n    },\n  ],\n\n  tooltip: {\n    trigger: \"axis\",\n    formatter: (params) => {\n\n      const data = params[0];\n      const value = Number(data.value).toLocaleString(\"pt-BR\");\n      return `${data.marker}${data.seriesName}: ${value}`;\n    }\n  },\n  xAxis: {\n    data: formattedduration,\n    boundaryGap: false,\n    type: \"category\",\n  },\n  yAxis: {\n    type: \"value\",\n    minInterval: 1,\n    axisLabel: {\n      formatter: (value) => value.toLocaleString(\"pt-BR\")\n    }\n  }\n};\n",
+                "google": {
+                    "callback": "gmapReady",
+                    "key": ""
+                },
+                "map": "json",
+                "renderer": "canvas",
+                "themeEditor": {
+                    "config": "{}",
+                    "height": 400,
+                    "name": "default"
+                },
+                "visualEditor": {
+                    "code": "return {\n  dataset: context.editor.dataset,\n  series: context.editor.series,\n  xAxis: {\n    type: 'time',\n  },\n  yAxis: {\n    type: 'value',\n    min: 'dataMin',\n  },\n}\n",
+                    "dataset": [],
+                    "series": []
+                }
+            },
+            "pluginVersion": "6.5.0",
+            "targets": [
+                {
+                    "body": "",
+                    "cacheDurationSeconds": 300,
+                    "datasource": {
+                        "type": "marcusolsson-json-datasource",
+                        "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
+                    },
+                    "fields": [
+                        {
+                            "jsonPath": "$.[first]",
+                            "language": "jsonpath",
+                            "name": "",
+                            "type": "time"
+                        },
+                        {
+                            "jsonPath": "$.[bpp]",
+                            "language": "jsonpath",
+                            "name": "",
+                            "type": "number"
+                        }
+                    ],
+                    "headers": [],
+                    "method": "GET",
+                    "params": [],
+                    "queryParams": "",
+                    "refId": "A",
+                    "urlPath": "/traffile?&timestart=$__from&timestop=$__to&fil=(${interfaces}) and ${filtro}&aggregation=router&order=pps&direction=${direction}&source=${source}"
+                }
+            ],
+            "title": "",
+            "type": "volkovlabs-echarts-panel"
+        },
+        {
+            "datasource": {
+                "type": "marcusolsson-json-datasource",
+                "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
             },
             "description": "",
             "fieldConfig": {
@@ -776,7 +861,7 @@
                     "cacheDurationSeconds": 300,
                     "datasource": {
                         "type": "marcusolsson-json-datasource",
-                        "uid": ""
+                        "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
                     },
                     "fields": [
                         {
@@ -1009,7 +1094,7 @@
         {
             "datasource": {
                 "type": "marcusolsson-json-datasource",
-                "uid": ""
+                "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
             },
             "description": "",
             "fieldConfig": {
@@ -1127,7 +1212,7 @@
                     "cacheDurationSeconds": 300,
                     "datasource": {
                         "type": "marcusolsson-json-datasource",
-                        "uid": ""
+                        "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
                     },
                     "fields": [
                         {
@@ -1161,7 +1246,7 @@
         {
             "datasource": {
                 "type": "marcusolsson-json-datasource",
-                "uid": ""
+                "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
             },
             "description": "",
             "fieldConfig": {
@@ -1279,7 +1364,7 @@
                     "cacheDurationSeconds": 300,
                     "datasource": {
                         "type": "marcusolsson-json-datasource",
-                        "uid": ""
+                        "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
                     },
                     "fields": [
                         {
@@ -1313,7 +1398,7 @@
         {
             "datasource": {
                 "type": "marcusolsson-json-datasource",
-                "uid": ""
+                "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
             },
             "description": "",
             "fieldConfig": {
@@ -1555,7 +1640,7 @@
                     "cacheDurationSeconds": 300,
                     "datasource": {
                         "type": "marcusolsson-json-datasource",
-                        "uid": ""
+                        "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
                     },
                     "fields": [
                         {
@@ -1614,7 +1699,7 @@
     "refresh": "30m",
     "schemaVersion": 40,
     "tags": [
-        "LF-FLOW"
+        "RR-FLOW"
     ],
     "templating": {
         "list": [
@@ -1625,7 +1710,7 @@
                 },
                 "datasource": {
                     "type": "marcusolsson-json-datasource",
-                    "uid": ""
+                    "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
                 },
                 "definition": "$.source_path.[name]",
                 "includeAll": false,
@@ -1995,7 +2080,7 @@
                 },
                 "datasource": {
                     "type": "marcusolsson-json-datasource",
-                    "uid": ""
+                    "uid": "d57bd7e3-2c0c-44a2-b03a-98b786695cb0"
                 },
                 "definition": "",
                 "description": "",
@@ -2041,7 +2126,7 @@
                         "value": "any"
                     }
                 ],
-                "query": "any",
+                "query": "proto udp",
                 "type": "textbox"
             }
         ]
@@ -2061,6 +2146,6 @@
     "timezone": "",
     "title": "An\u00e1lise - Filtro (Manual)",
     "uid": "be3muvk8ahla8c",
-    "version": 16,
+    "version": 18,
     "weekStart": ""
 }
