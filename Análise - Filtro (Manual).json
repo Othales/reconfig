@@ -1,0 +1,2066 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 294,
+    "links": [],
+    "panels": [
+        {
+            "datasource": {
+                "type": "marcusolsson-json-datasource",
+                "uid": ""
+            },
+            "description": "",
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 12,
+                "x": 0,
+                "y": 0
+            },
+            "id": 7,
+            "interval": "5m",
+            "options": {
+                "baidu": {
+                    "callback": "bmapReady",
+                    "key": ""
+                },
+                "editor": {
+                    "format": "auto",
+                    "height": 600
+                },
+                "editorMode": "code",
+                "gaode": {
+                    "key": "",
+                    "plugin": "AMap.Scale,AMap.ToolBar"
+                },
+                "getOption": "context.panel.data.series.map((s) => {\n  if (s.refId === \"A\") {\n    duration = s.fields.find((f) => f.name === \"first\").values;\n    bps = s.fields.find((f) => f.name === \"bps\").values;\n    vbytes = s.fields.find((f) => f.name === \"bytes\").values;\n  }\n});\n\nconst uniqueDuration = [];\nconst uniqueBps = [];\nconst uniqueVbytes = [];\n\nfor (let i = 0; i < duration.length; i++) {\n  if (i === 0 || duration[i] !== duration[i - 1]) {\n    uniqueDuration.push(duration[i]);\n    uniqueBps.push(bps[i]);\n    uniqueVbytes.push(vbytes[i]);\n  }\n}\n\nduration = uniqueDuration;\nbps = uniqueBps;\nvbytes = uniqueVbytes;\n\nconst formatDate = (timestamp) => {\n  const date = new Date(timestamp);\n  const options = {\n    hour: \"2-digit\",\n    minute: \"2-digit\"\n  };\n  return date.toLocaleString(\"pt-BR\", options);\n};\nconst formatTime = (timestamp) => {\n  const date = new Date(timestamp);\n  const options = {\n    month: \"2-digit\",\n    day: \"2-digit\",\n    hour: \"2-digit\",\n    minute: \"2-digit\"\n  };\n  return date.toLocaleString(\"pt-BR\", options);\n};\nconst formattedduration = duration.map((timestamp) => formatDate(timestamp));\n\nconst formatBytes = (bytes) => {\n  const units = ['b', 'Kb', 'Mb', 'Gb', 'Tb'];\n  let index = 0;\n  while (bytes >= 1000 && index < units.length - 1) {\n    bytes /= 1000;\n    index++;\n  }\n  return bytes.toFixed(2) + ' ' + units[index];\n};\n\nfunction formatPont(value) {\n  return value.toLocaleString();\n}\n\nfunction hexToRgba(hex, opacity) {\n  hex = hex.replace(\"#\", \"\");\n  const r = parseInt(hex.substring(0, 2), 16);\n  const g = parseInt(hex.substring(2, 4), 16);\n  const b = parseInt(hex.substring(4, 6), 16);\n  return `rgba(${r}, ${g}, ${b}, ${opacity})`;\n}\n\nvar corLine = \"#AD1457\";\nvar corGrafL = corLine;\nvar corGrafF = \"#880E4F\";\n\nvar corMed = \"#FFF\";\n\nvar corBarL = \"#999\";\nvar corBarD = corLine;\ncorBarB = \"#0D47A1\";\nconst corBarBg = hexToRgba(corBarB, 0.5);\n\n\nreturn {\n  grid: {\n    containLabel: true,\n    left: \"2%\",\n    right: \"70px\",\n    top: \"55px\",\n    bottom: '3%',\n  },\n  title: {\n    text: \"Tr\u00e1f:\"\n  },\n  series: [\n    {\n      data: bps,\n      smooth: true,\n      type: \"line\",\n      name: 'Bytes',\n      itemStyle: {\n        color: corLine\n      },\n      markPoint: {\n        data: [\n          {\n            symbolSize: 60,\n            name: \"Max\",\n            type: \"max\",\n            label: {\n              formatter: function (params) {\n                return 'M\u00e1x:\\n' + formatBytes(params.value);\n              },\n            },\n          },\n          {\n            symbolSize: 60,\n            name: \"Min\",\n            type: \"min\",\n            label: {\n              formatter: function (params) {\n                return 'M\u00edn:\\n' + formatBytes(params.value);\n              },\n            },\n          }\n        ]\n      },\n      markLine: {\n        // symbol: 'none',\n        lineStyle: {\n          color: corMed,\n          type: 'solid',\n          opacity: 0.6\n        },\n        data: [\n          {\n            name: 'M\u00e9d',\n            type: 'average',\n\n            label: {\n              formatter: function (params) {\n                return 'M\u00e9d\\n' + formatBytes(params.value);\n              },\n              textStyle: {\n                color: \"#FFF\",\n                opacity: 1,\n              },\n            }\n          }\n        ]\n      },\n      areaStyle: {\n        color: new context.echarts.graphic.LinearGradient(0, 0, 0, 1.2, [\n          {\n            offset: 0,\n            color: corGrafL\n          },\n          {\n            offset: 1,\n            color: corGrafF\n          }\n        ])\n      },\n    }\n  ],\n\n  tooltip: {\n    trigger: 'axis',\n    axisPointer: {\n      type: 'shadow'\n    },\n    formatter: function (params) {\n      const dataIndex = params[0].dataIndex;\n      const bpsValue = formatBytes(bps[dataIndex]);\n      const bytesValue = formatBytes((vbytes[dataIndex]) / 1000);\n      const formattedDate = formatDate(duration[dataIndex]);\n      const formattedTime = formatTime(duration[dataIndex]);\n\n      return `<span style=\"font-weight: bold; font-size: 16px;\">${bpsValue}</span>\n      Trafegado: ${bytesValue}\n      <em>${formattedTime}</em>`;\n    },\n    extraCssText: 'white-space: pre-line;'\n  },\n  toolbox: {\n    feature: {\n      saveAsImage: {}\n    }\n  },\n  xAxis: {\n    data: formattedduration,\n    boundaryGap: false,\n    type: \"category\",\n  },\n  yAxis: {\n    type: \"value\",\n    axisLabel: {\n      formatter: function (value) {\n        return formatBytes(value);\n      }\n    },\n  }\n};\n",
+                "google": {
+                    "callback": "gmapReady",
+                    "key": ""
+                },
+                "map": "json",
+                "renderer": "canvas",
+                "themeEditor": {
+                    "config": "{}",
+                    "height": 400,
+                    "name": "default"
+                },
+                "visualEditor": {
+                    "code": "console.log(context);\nreturn {\n  dataset: context.editor.dataset,\n  series: context.editor.series,\n  xAxis: {\n    type: 'time',\n  },\n  yAxis: {\n    type: 'value',\n    min: 'dataMin',\n  },\n}\n",
+                    "dataset": [],
+                    "series": []
+                }
+            },
+            "pluginVersion": "6.5.0",
+            "targets": [
+                {
+                    "body": "",
+                    "cacheDurationSeconds": 0,
+                    "datasource": {
+                        "type": "marcusolsson-json-datasource",
+                        "uid": ""
+                    },
+                    "fields": [
+                        {
+                            "jsonPath": "$.[first]",
+                            "language": "jsonpath",
+                            "name": "",
+                            "type": "time"
+                        },
+                        {
+                            "jsonPath": "$.[bytes]",
+                            "language": "jsonpath",
+                            "name": "",
+                            "type": "number"
+                        },
+                        {
+                            "jsonPath": "$.[bps]",
+                            "language": "jsonpath",
+                            "name": "",
+                            "type": "number"
+                        }
+                    ],
+                    "headers": [],
+                    "method": "GET",
+                    "params": [],
+                    "queryParams": "",
+                    "refId": "A",
+                    "urlPath": "/traffile?&timestart=$__from&timestop=$__to&fil=(${interfaces}) and ${filtro}&aggregation=router&order=bytes&direction=${direction}&source=${source}"
+                }
+            ],
+            "title": "",
+            "type": "volkovlabs-echarts-panel"
+        },
+        {
+            "datasource": {
+                "type": "marcusolsson-json-datasource",
+                "uid": ""
+            },
+            "description": "",
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 6,
+                "w": 12,
+                "x": 12,
+                "y": 0
+            },
+            "id": 8,
+            "interval": "5m",
+            "options": {
+                "baidu": {
+                    "callback": "bmapReady",
+                    "key": ""
+                },
+                "editor": {
+                    "format": "auto",
+                    "height": 600
+                },
+                "editorMode": "code",
+                "gaode": {
+                    "key": "",
+                    "plugin": "AMap.Scale,AMap.ToolBar"
+                },
+                "getOption": "context.panel.data.series.map((s) => {\n  if (s.refId === \"A\") {\n    duration = s.fields.find((f) => f.name === \"first\").values;\n    packets = s.fields.find((f) => f.name === \"packets\").values;\n  }\n});\n\nconst uniqueDuration = [];\n\nfor (let i = 0; i < duration.length; i++) {\n  if (i === 0 || duration[i] !== duration[i - 1]) {\n    uniqueDuration.push(duration[i]);\n  }\n}\n\nduration = uniqueDuration;\n\nconst formatDate = (timestamp) => {\n  const date = new Date(timestamp);\n  const options = {\n    hour: \"2-digit\",\n    minute: \"2-digit\"\n  };\n  return date.toLocaleString(\"pt-BR\", options);\n};\n\nconst formattedduration = duration.map((timestamp) => formatDate(timestamp));\n\nfunction formatPont(value) {\n  return value.toLocaleString(\"pt-BR\");\n}\n\nreturn {\n  grid: {\n    containLabel: true,\n    left: \"2%\",\n    right: \"70px\",\n    top: \"45px\",\n    bottom: '3%',\n  },\n  legend: {\n    left: 'center'\n  },\n  series: [\n    {\n      smooth: true,\n      data: packets,\n      itemStyle: {\n        color: '#FF9100'\n      },      \n      markLine: {\n        data: [\n          {\n            name: \"Avg\",\n            type: \"average\"\n          }\n        ]\n      },\n      markPoint: {\n        data: [\n          {\n            name: \"Max\",\n            type: \"max\",\n            symbol: 'circle',\n            symbolSize: 10,\n            label: {\n              color: '#FFAB40',\n              position: [0, -15]\n            },\n            itemStyle: {\n              color: '#FFAB40',\n            }\n          },\n        ]\n      },\n      name: \"Pacotes\",\n      type: \"line\",\n\n      areaStyle: {\n        color: new context.echarts.graphic.LinearGradient(0, 0, 0, 1.2, [\n          {\n            offset: 0,\n            color: '#FFAB40'\n          },\n          {\n            offset: 1,\n            color: '#FFFF00'\n          }\n        ])\n      },\n\n    },\n\n\n  ],\n\n  tooltip: {\n    trigger: \"axis\"\n  },\n  xAxis: {\n    data: formattedduration,\n    boundaryGap: false,\n    type: \"category\",\n  },\n  yAxis: {\n\n    type: \"value\"\n  }\n};\n",
+                "google": {
+                    "callback": "gmapReady",
+                    "key": ""
+                },
+                "map": "json",
+                "renderer": "canvas",
+                "themeEditor": {
+                    "config": "{}",
+                    "height": 400,
+                    "name": "default"
+                },
+                "visualEditor": {
+                    "code": "return {\n  dataset: context.editor.dataset,\n  series: context.editor.series,\n  xAxis: {\n    type: 'time',\n  },\n  yAxis: {\n    type: 'value',\n    min: 'dataMin',\n  },\n}\n",
+                    "dataset": [],
+                    "series": []
+                }
+            },
+            "pluginVersion": "6.5.0",
+            "targets": [
+                {
+                    "body": "",
+                    "cacheDurationSeconds": 300,
+                    "datasource": {
+                        "type": "marcusolsson-json-datasource",
+                        "uid": ""
+                    },
+                    "fields": [
+                        {
+                            "jsonPath": "$.[first]",
+                            "language": "jsonpath",
+                            "name": "",
+                            "type": "time"
+                        },
+                        {
+                            "jsonPath": "$.[packets]",
+                            "language": "jsonpath",
+                            "name": "",
+                            "type": "number"
+                        }
+                    ],
+                    "headers": [],
+                    "method": "GET",
+                    "params": [],
+                    "queryParams": "",
+                    "refId": "A",
+                    "urlPath": "/traffile?&timestart=$__from&timestop=$__to&fil=(${interfaces}) and ${filtro}&aggregation=router&order=pps&direction=${direction}&source=${source}"
+                }
+            ],
+            "title": "",
+            "type": "volkovlabs-echarts-panel"
+        },
+        {
+            "datasource": {
+                "type": "marcusolsson-json-datasource",
+                "uid": ""
+            },
+            "description": "",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "center",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "#c2185b",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Traf."
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "gradient",
+                                    "type": "gauge",
+                                    "valueDisplayMode": "color"
+                                }
+                            },
+                            {
+                                "id": "unit",
+                                "value": "bits"
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 281
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "BPS"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "bits"
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "type": "color-text"
+                                }
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 90
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "pps"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 77
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Proto"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 74
+                            },
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "options": {
+                                            "Any": {
+                                                "color": "#333333",
+                                                "index": 0
+                                            },
+                                            "GRE": {
+                                                "color": "#10c1af",
+                                                "index": 4
+                                            },
+                                            "ICMP": {
+                                                "color": "#80db39",
+                                                "index": 3
+                                            },
+                                            "L2TP": {
+                                                "color": "#c62ee1",
+                                                "index": 5
+                                            },
+                                            "OSPF": {
+                                                "color": "#465de1",
+                                                "index": 6
+                                            },
+                                            "TCP": {
+                                                "color": "#0e8fe5",
+                                                "index": 1
+                                            },
+                                            "UDP": {
+                                                "color": "#96746a",
+                                                "index": 2
+                                            }
+                                        },
+                                        "type": "value"
+                                    },
+                                    {
+                                        "options": {
+                                            "match": "empty",
+                                            "result": {
+                                                "color": "#adadad",
+                                                "index": 7
+                                            }
+                                        },
+                                        "type": "special"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "type": "color-text"
+                                }
+                            },
+                            {
+                                "id": "custom.filterable",
+                                "value": true
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "S: Port"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 79
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "D: Port"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 85
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "S: ASN"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 104
+                            },
+                            {
+                                "id": "custom.filterable",
+                                "value": true
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "D: ASN"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 105
+                            },
+                            {
+                                "id": "custom.filterable",
+                                "value": true
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "S: UF"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 51
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "S: ISO"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 62
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "D: UF"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 58
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "D: ISO"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 64
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "src_lat"
+                        },
+                        "properties": [
+                            {
+                                "id": "decimals",
+                                "value": 4
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "dst_lat"
+                        },
+                        "properties": [
+                            {
+                                "id": "decimals",
+                                "value": 4
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "src_long"
+                        },
+                        "properties": [
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "dst_long"
+                        },
+                        "properties": [
+                            {
+                                "id": "decimals",
+                                "value": 4
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "D: IP"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 185
+                            },
+                            {
+                                "id": "custom.filterable",
+                                "value": true
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "S: IP"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 162
+                            },
+                            {
+                                "id": "custom.filterable",
+                                "value": true
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "first"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 206
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Flows"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 84
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Inicial"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 160
+                            },
+                            {
+                                "id": "unit",
+                                "value": "dateTimeAsLocal"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Final"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 160
+                            },
+                            {
+                                "id": "unit",
+                                "value": "dateTimeAsLocal"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Flags"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 103
+                            },
+                            {
+                                "id": "mappings",
+                                "value": [
+                                    {
+                                        "options": {
+                                            "........": {
+                                                "color": "text",
+                                                "index": 9,
+                                                "text": "-"
+                                            },
+                                            "......S.": {
+                                                "color": "#63ff1f",
+                                                "index": 0,
+                                                "text": "SYN"
+                                            },
+                                            ".....R..": {
+                                                "color": "#ff73a2",
+                                                "index": 6,
+                                                "text": "RST"
+                                            },
+                                            "...A....": {
+                                                "color": "#31cccc",
+                                                "index": 1,
+                                                "text": "ACK"
+                                            },
+                                            "...A...F": {
+                                                "color": "dark-yellow",
+                                                "index": 5,
+                                                "text": "ACK/FIN"
+                                            },
+                                            "...A..S.": {
+                                                "color": "#00e077",
+                                                "index": 3,
+                                                "text": "ACK/SYN"
+                                            },
+                                            "...A.R..": {
+                                                "color": "super-light-red",
+                                                "index": 7,
+                                                "text": "ACK/RST"
+                                            },
+                                            "...AP...": {
+                                                "color": "semi-dark-blue",
+                                                "index": 2,
+                                                "text": "ACK/PSH"
+                                            },
+                                            "...AP..F": {
+                                                "color": "dark-orange",
+                                                "index": 4,
+                                                "text": "ACK/PSH/FIN"
+                                            },
+                                            "..UAPRSF": {
+                                                "color": "#ff3c00",
+                                                "index": 8,
+                                                "text": "!AFRPU!"
+                                            }
+                                        },
+                                        "type": "value"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "type": "color-text"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "ToS"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 63
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Int. In"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 70
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Int. Out"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 71
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "bpp"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 90
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "type": "color-text"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "TTL"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.width",
+                                "value": 70
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 15,
+                "w": 24,
+                "x": 0,
+                "y": 6
+            },
+            "id": 5,
+            "interval": "5m",
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "enablePagination": true,
+                    "fields": "",
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": false
+                },
+                "showHeader": true,
+                "sortBy": [
+                    {
+                        "desc": true,
+                        "displayName": "Traf."
+                    }
+                ]
+            },
+            "pluginVersion": "11.3.0+security-01",
+            "targets": [
+                {
+                    "cacheDurationSeconds": 300,
+                    "datasource": {
+                        "type": "marcusolsson-json-datasource",
+                        "uid": ""
+                    },
+                    "fields": [
+                        {
+                            "jsonPath": "$.[bytes]",
+                            "language": "jsonpath",
+                            "name": "Traf.",
+                            "type": "number"
+                        },
+                        {
+                            "jsonPath": "$.[first]",
+                            "language": "jsonpath",
+                            "name": "Inicial",
+                            "type": "time"
+                        },
+                        {
+                            "jsonPath": "$.[last]",
+                            "language": "jsonpath",
+                            "name": "Final",
+                            "type": "time"
+                        },
+                        {
+                            "jsonPath": "$.[bps]",
+                            "language": "jsonpath",
+                            "name": "BPS"
+                        },
+                        {
+                            "jsonPath": "$.[packets]",
+                            "language": "jsonpath",
+                            "name": "pps",
+                            "type": "number"
+                        },
+                        {
+                            "jsonPath": "$.[bpp]",
+                            "language": "jsonpath",
+                            "name": "bpp"
+                        },
+                        {
+                            "jsonPath": "$.[ip_ttl]",
+                            "language": "jsonpath",
+                            "name": "TTL"
+                        },
+                        {
+                            "jsonPath": "$.[tos]",
+                            "language": "jsonpath",
+                            "name": "ToS"
+                        },
+                        {
+                            "jsonPath": "$.[aggr_flows]",
+                            "language": "jsonpath",
+                            "name": "Flows",
+                            "type": "number"
+                        },
+                        {
+                            "jsonPath": "$.[tcp_flags]",
+                            "language": "jsonpath",
+                            "name": "Flags",
+                            "type": "string"
+                        },
+                        {
+                            "jsonPath": "$.[proto]",
+                            "language": "jsonpath",
+                            "name": "Proto",
+                            "type": "string"
+                        },
+                        {
+                            "jsonPath": "$.[src_addr]",
+                            "language": "jsonpath",
+                            "name": "S: IP",
+                            "type": "string"
+                        },
+                        {
+                            "jsonPath": "$.[src_port]",
+                            "language": "jsonpath",
+                            "name": "S: Port"
+                        },
+                        {
+                            "jsonPath": "$.[dst_addr]",
+                            "language": "jsonpath",
+                            "name": "D: IP",
+                            "type": "string"
+                        },
+                        {
+                            "jsonPath": "$.[dst_port]",
+                            "language": "jsonpath",
+                            "name": "D: Port"
+                        },
+                        {
+                            "jsonPath": "$.[ASN].src.number",
+                            "language": "jsonpath",
+                            "name": "S: ASN",
+                            "type": "number"
+                        },
+                        {
+                            "jsonPath": "$.[ASN].src.organization",
+                            "language": "jsonpath",
+                            "name": "S: Org.",
+                            "type": "string"
+                        },
+                        {
+                            "jsonPath": "$.[City].src",
+                            "language": "jsonpath",
+                            "name": "S: City"
+                        },
+                        {
+                            "jsonPath": "$.[UF].src",
+                            "language": "jsonpath",
+                            "name": "S: UF"
+                        },
+                        {
+                            "jsonPath": "$.[ISO Code].src",
+                            "language": "jsonpath",
+                            "name": "S: ISO"
+                        },
+                        {
+                            "jsonPath": "$.[Continent Name].src",
+                            "language": "jsonpath",
+                            "name": "S: Cont."
+                        },
+                        {
+                            "jsonPath": "$.[Country Name].src",
+                            "language": "jsonpath",
+                            "name": "S: Country"
+                        },
+                        {
+                            "jsonPath": "$.[ASN].dst.number",
+                            "language": "jsonpath",
+                            "name": "D: ASN",
+                            "type": "number"
+                        },
+                        {
+                            "jsonPath": "$.[ASN].dst.organization",
+                            "language": "jsonpath",
+                            "name": "D: Org",
+                            "type": "string"
+                        },
+                        {
+                            "jsonPath": "$.[City].dst",
+                            "language": "jsonpath",
+                            "name": "D: City",
+                            "type": "string"
+                        },
+                        {
+                            "jsonPath": "$.[UF].dst",
+                            "language": "jsonpath",
+                            "name": "D: UF",
+                            "type": "string"
+                        },
+                        {
+                            "jsonPath": "$.[ISO Code].dst",
+                            "language": "jsonpath",
+                            "name": "D: ISO",
+                            "type": "string"
+                        },
+                        {
+                            "jsonPath": "$.[Continent Name].dst",
+                            "language": "jsonpath",
+                            "name": "D: Cont.",
+                            "type": "string"
+                        },
+                        {
+                            "jsonPath": "$.[Country Name].dst",
+                            "language": "jsonpath",
+                            "name": "D: Country"
+                        },
+                        {
+                            "jsonPath": "$.[bgp_next_hop]",
+                            "language": "jsonpath",
+                            "name": "BGP Next Hop"
+                        },
+                        {
+                            "jsonPath": "$.[input_snmp]",
+                            "language": "jsonpath",
+                            "name": "Int. In"
+                        },
+                        {
+                            "jsonPath": "$.[input_snmp_desc]",
+                            "language": "jsonpath",
+                            "name": "Int. In Desc."
+                        },
+                        {
+                            "jsonPath": "$.[input_snmp_name]",
+                            "language": "jsonpath",
+                            "name": "Int. In Nome"
+                        },
+                        {
+                            "jsonPath": "$.[output_snmp]",
+                            "language": "jsonpath",
+                            "name": "Int. Out"
+                        },
+                        {
+                            "jsonPath": "$.[output_snmp_desc]",
+                            "language": "jsonpath",
+                            "name": "Int. Out Desc."
+                        },
+                        {
+                            "jsonPath": "$.[output_snmp_name]",
+                            "language": "jsonpath",
+                            "name": "Int. Out Nome"
+                        },
+                        {
+                            "jsonPath": "$.[mac_src_in]",
+                            "language": "jsonpath",
+                            "name": "MAC Origem"
+                        },
+                        {
+                            "jsonPath": "$.[mac_dst_out]",
+                            "language": "jsonpath",
+                            "name": "MAC Entrada"
+                        },
+                        {
+                            "jsonPath": "$.[mac_src_out]",
+                            "language": "jsonpath",
+                            "name": "MAC Sa\u00edda"
+                        },
+                        {
+                            "jsonPath": "$.[label]",
+                            "language": "jsonpath",
+                            "name": "Label"
+                        }
+                    ],
+                    "method": "GET",
+                    "queryParams": "",
+                    "refId": "A",
+                    "urlPath": "/trafstat?&timestart=$__from&timestop=$__to&fil=(${interfaces}) and $filtro&lines=${n}&aggregation=${A}&order=${O}&reverse=n&direction=${direction}&source=${source}"
+                }
+            ],
+            "title": "Conex\u00f5es",
+            "type": "table"
+        },
+        {
+            "datasource": {
+                "type": "marcusolsson-json-datasource",
+                "uid": ""
+            },
+            "description": "",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "center",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "light-orange",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Trafegado"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "decbits"
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "gradient",
+                                    "type": "gauge",
+                                    "valueDisplayMode": "text"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "ASN"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.filterable",
+                                "value": true
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 100
+                            },
+                            {
+                                "id": "custom.align",
+                                "value": "center"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "ORGAN."
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.align",
+                                "value": "right"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 14,
+                "w": 8,
+                "x": 0,
+                "y": 21
+            },
+            "id": 6,
+            "interval": "5m",
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "enablePagination": false,
+                    "fields": "",
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": false
+                },
+                "showHeader": true,
+                "sortBy": [
+                    {
+                        "desc": true,
+                        "displayName": "Trafegado"
+                    }
+                ]
+            },
+            "pluginVersion": "11.3.0+security-01",
+            "targets": [
+                {
+                    "cacheDurationSeconds": 300,
+                    "datasource": {
+                        "type": "marcusolsson-json-datasource",
+                        "uid": ""
+                    },
+                    "fields": [
+                        {
+                            "jsonPath": "$.[asn_def_name]",
+                            "language": "jsonpath",
+                            "name": "ORGAN."
+                        },
+                        {
+                            "jsonPath": "$.[asn_def]",
+                            "language": "jsonpath",
+                            "name": "ASN"
+                        },
+                        {
+                            "jsonPath": "$.[bytes]",
+                            "language": "jsonpath",
+                            "name": "Trafegado",
+                            "type": "number"
+                        }
+                    ],
+                    "headers": [],
+                    "method": "GET",
+                    "params": [],
+                    "queryParams": "",
+                    "refId": "A",
+                    "urlPath": "/trafstat?&timestart=$__from&timestop=$__to&fil=(${interfaces}) and $filtro&lines=10&aggregation=srcas&order=${O}&reverse=n&direction=src&ignoreasn=y&source=${source}"
+                }
+            ],
+            "title": "TOP 10 AS (SRC)",
+            "type": "table"
+        },
+        {
+            "datasource": {
+                "type": "marcusolsson-json-datasource",
+                "uid": ""
+            },
+            "description": "",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "align": "center",
+                        "cellOptions": {
+                            "type": "auto"
+                        },
+                        "inspect": false
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "light-orange",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Trafegado"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "decbits"
+                            },
+                            {
+                                "id": "custom.cellOptions",
+                                "value": {
+                                    "mode": "gradient",
+                                    "type": "gauge",
+                                    "valueDisplayMode": "text"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "ASN"
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.filterable",
+                                "value": true
+                            },
+                            {
+                                "id": "custom.width",
+                                "value": 100
+                            },
+                            {
+                                "id": "custom.align",
+                                "value": "center"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "ORGAN."
+                        },
+                        "properties": [
+                            {
+                                "id": "custom.align",
+                                "value": "right"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 14,
+                "w": 8,
+                "x": 8,
+                "y": 21
+            },
+            "id": 10,
+            "interval": "5m",
+            "options": {
+                "cellHeight": "sm",
+                "footer": {
+                    "countRows": false,
+                    "enablePagination": false,
+                    "fields": "",
+                    "reducer": [
+                        "sum"
+                    ],
+                    "show": false
+                },
+                "showHeader": true,
+                "sortBy": [
+                    {
+                        "desc": true,
+                        "displayName": "Trafegado"
+                    }
+                ]
+            },
+            "pluginVersion": "11.3.0+security-01",
+            "targets": [
+                {
+                    "cacheDurationSeconds": 300,
+                    "datasource": {
+                        "type": "marcusolsson-json-datasource",
+                        "uid": ""
+                    },
+                    "fields": [
+                        {
+                            "jsonPath": "$.[asn_def_name]",
+                            "language": "jsonpath",
+                            "name": "ORGAN."
+                        },
+                        {
+                            "jsonPath": "$.[asn_def]",
+                            "language": "jsonpath",
+                            "name": "ASN"
+                        },
+                        {
+                            "jsonPath": "$.[bytes]",
+                            "language": "jsonpath",
+                            "name": "Trafegado",
+                            "type": "number"
+                        }
+                    ],
+                    "headers": [],
+                    "method": "GET",
+                    "params": [],
+                    "queryParams": "",
+                    "refId": "A",
+                    "urlPath": "/trafstat?&timestart=$__from&timestop=$__to&fil=(${interfaces}) and $filtro&lines=10&aggregation=dstas&order=${O}&reverse=n&direction=dst&ignoreasn=y&source=${source}"
+                }
+            ],
+            "title": "TOP 10 AS  (DST)",
+            "type": "table"
+        },
+        {
+            "datasource": {
+                "type": "marcusolsson-json-datasource",
+                "uid": ""
+            },
+            "description": "",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "custom": {
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    }
+                },
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "Traf."
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "bits"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "BPS"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit",
+                                "value": "bits"
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "src_lat"
+                        },
+                        "properties": [
+                            {
+                                "id": "decimals",
+                                "value": 4
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "dst_lat"
+                        },
+                        "properties": [
+                            {
+                                "id": "decimals",
+                                "value": 4
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "src_long"
+                        },
+                        "properties": [
+                            {
+                                "id": "decimals",
+                                "value": 2
+                            }
+                        ]
+                    },
+                    {
+                        "matcher": {
+                            "id": "byName",
+                            "options": "dst_long"
+                        },
+                        "properties": [
+                            {
+                                "id": "decimals",
+                                "value": 4
+                            }
+                        ]
+                    }
+                ]
+            },
+            "gridPos": {
+                "h": 14,
+                "w": 8,
+                "x": 16,
+                "y": 21
+            },
+            "id": 4,
+            "interval": "5m",
+            "options": {
+                "basemap": {
+                    "config": {},
+                    "name": "Layer 0",
+                    "type": "default"
+                },
+                "controls": {
+                    "mouseWheelZoom": true,
+                    "showAttribution": true,
+                    "showDebug": false,
+                    "showMeasure": false,
+                    "showScale": false,
+                    "showZoom": true
+                },
+                "layers": [
+                    {
+                        "config": {
+                            "showLegend": true,
+                            "style": {
+                                "color": {
+                                    "fixed": "dark-green"
+                                },
+                                "opacity": 0.2,
+                                "rotation": {
+                                    "fixed": 0,
+                                    "max": 360,
+                                    "min": -360,
+                                    "mode": "mod"
+                                },
+                                "size": {
+                                    "field": "BPS",
+                                    "fixed": 5,
+                                    "max": 15,
+                                    "min": 2
+                                },
+                                "symbol": {
+                                    "fixed": "img/icons/marker/circle.svg",
+                                    "mode": "fixed"
+                                },
+                                "text": {
+                                    "fixed": "",
+                                    "mode": "field"
+                                },
+                                "textConfig": {
+                                    "fontSize": 12,
+                                    "offsetX": 0,
+                                    "offsetY": 0,
+                                    "textAlign": "center",
+                                    "textBaseline": "middle"
+                                }
+                            }
+                        },
+                        "filterData": {
+                            "id": "byRefId",
+                            "options": "A"
+                        },
+                        "location": {
+                            "latitude": "src_lat",
+                            "longitude": "src_long",
+                            "mode": "coords"
+                        },
+                        "name": "Entradas",
+                        "tooltip": false,
+                        "type": "markers"
+                    },
+                    {
+                        "config": {
+                            "showLegend": true,
+                            "style": {
+                                "color": {
+                                    "fixed": "blue"
+                                },
+                                "opacity": 0.2,
+                                "rotation": {
+                                    "fixed": 0,
+                                    "max": 360,
+                                    "min": -360,
+                                    "mode": "mod"
+                                },
+                                "size": {
+                                    "field": "Traf.",
+                                    "fixed": 5,
+                                    "max": 15,
+                                    "min": 2
+                                },
+                                "symbol": {
+                                    "fixed": "img/icons/marker/circle.svg",
+                                    "mode": "fixed"
+                                },
+                                "textConfig": {
+                                    "fontSize": 12,
+                                    "offsetX": 0,
+                                    "offsetY": 0,
+                                    "textAlign": "center",
+                                    "textBaseline": "middle"
+                                }
+                            }
+                        },
+                        "filterData": {
+                            "id": "byRefId",
+                            "options": "A"
+                        },
+                        "location": {
+                            "latitude": "dst_lat",
+                            "longitude": "dst_long",
+                            "mode": "coords"
+                        },
+                        "name": "Sa\u00eddas",
+                        "tooltip": false,
+                        "type": "markers"
+                    }
+                ],
+                "tooltip": {
+                    "mode": "details"
+                },
+                "view": {
+                    "allLayers": true,
+                    "id": "coords",
+                    "lat": 0,
+                    "lon": 0,
+                    "zoom": 1.5
+                }
+            },
+            "pluginVersion": "11.3.0+security-01",
+            "targets": [
+                {
+                    "cacheDurationSeconds": 300,
+                    "datasource": {
+                        "type": "marcusolsson-json-datasource",
+                        "uid": ""
+                    },
+                    "fields": [
+                        {
+                            "jsonPath": "$.[bytes]",
+                            "language": "jsonpath",
+                            "name": "Traf.",
+                            "type": "number"
+                        },
+                        {
+                            "jsonPath": "$.[bps]",
+                            "language": "jsonpath",
+                            "name": "BPS"
+                        },
+                        {
+                            "jsonPath": "$.[packets]",
+                            "language": "jsonpath",
+                            "name": "Pps",
+                            "type": "number"
+                        },
+                        {
+                            "jsonPath": "$.[Latitude].src",
+                            "language": "jsonpath",
+                            "name": "src_lat",
+                            "type": "number"
+                        },
+                        {
+                            "jsonPath": "$.[Latitude].dst",
+                            "language": "jsonpath",
+                            "name": "dst_lat",
+                            "type": "number"
+                        },
+                        {
+                            "jsonPath": "$.[Longitude].src",
+                            "language": "jsonpath",
+                            "name": "src_long",
+                            "type": "number"
+                        },
+                        {
+                            "jsonPath": "$.[Longitude].dst",
+                            "language": "jsonpath",
+                            "name": "dst_long",
+                            "type": "number"
+                        }
+                    ],
+                    "method": "GET",
+                    "queryParams": "",
+                    "refId": "A",
+                    "urlPath": "/trafstat?&timestart=$__from&timestop=$__to&fil=$filtro&lines=${n}&aggregation=${A}&order=${O}&reverse=n&direction=${direction}&source=${source}"
+                }
+            ],
+            "title": "Map",
+            "type": "geomap"
+        }
+    ],
+    "preload": false,
+    "refresh": "30m",
+    "schemaVersion": 40,
+    "tags": [
+        "LF-FLOW"
+    ],
+    "templating": {
+        "list": [
+            {
+                "current": {
+                    "text": "RS-BORDA",
+                    "value": "RS-BORDA"
+                },
+                "datasource": {
+                    "type": "marcusolsson-json-datasource",
+                    "uid": ""
+                },
+                "definition": "$.source_path.[name]",
+                "includeAll": false,
+                "label": "Router:",
+                "name": "source",
+                "options": [],
+                "query": {
+                    "cacheDurationSeconds": 300,
+                    "fields": [
+                        {
+                            "jsonPath": "$.source_path.[name]"
+                        }
+                    ],
+                    "method": "GET",
+                    "queryParams": "",
+                    "urlPath": "/conf"
+                },
+                "refresh": 1,
+                "regex": "",
+                "sort": 1,
+                "type": "query"
+            },
+            {
+                "current": {
+                    "text": "50",
+                    "value": "50"
+                },
+                "includeAll": false,
+                "label": "Conex\u00f5es:",
+                "name": "n",
+                "options": [
+                    {
+                        "selected": false,
+                        "text": "10",
+                        "value": "10"
+                    },
+                    {
+                        "selected": false,
+                        "text": "15",
+                        "value": "15"
+                    },
+                    {
+                        "selected": false,
+                        "text": "20",
+                        "value": "20"
+                    },
+                    {
+                        "selected": true,
+                        "text": "50",
+                        "value": "50"
+                    },
+                    {
+                        "selected": false,
+                        "text": "100",
+                        "value": "100"
+                    },
+                    {
+                        "selected": false,
+                        "text": "200",
+                        "value": "200"
+                    }
+                ],
+                "query": "10,15,20,50,100,200",
+                "type": "custom"
+            },
+            {
+                "current": {
+                    "text": "none",
+                    "value": "none"
+                },
+                "description": "",
+                "includeAll": false,
+                "label": "Agrega\u00e7\u00e3o:",
+                "name": "A",
+                "options": [
+                    {
+                        "selected": true,
+                        "text": "(none) N\u00e3o agrupar",
+                        "value": "none"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(srcip) Endere\u00e7o IP de origem",
+                        "value": "srcip"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(dstip) Endere\u00e7o IP de destino",
+                        "value": "dstip"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(srcip,dstip) Endere\u00e7o IP origem/destino",
+                        "value": "srcip,dstip"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(proto) Protocolo IP",
+                        "value": "proto"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(srcport) Porta de origem",
+                        "value": "srcport"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(dstport) Porta de destino",
+                        "value": "dstport"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(srcmask) M\u00e1scara de origem",
+                        "value": "srcmask"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(dstmask) M\u00e1scara de destino",
+                        "value": "dstmask"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(srcvlan) R\u00f3tulo VLAN de origem",
+                        "value": "srcvlan"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(dstvlan) R\u00f3tulo VLAN de destino",
+                        "value": "dstvlan"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(srcas) N\u00famero AS de origem",
+                        "value": "srcas"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(dstas) N\u00famero AS de destino",
+                        "value": "dstas"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(nextas) Pr\u00f3ximo AS do BGP",
+                        "value": "nextas"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(prevas) AS anterior do BGP",
+                        "value": "prevas"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(inif) N\u00famero da interface de entrada SNMP",
+                        "value": "inif"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(outif) N\u00famero da interface de sa\u00edda SNMP",
+                        "value": "outif"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(next) Pr\u00f3ximo salto IP",
+                        "value": "next"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(bgpnext) Pr\u00f3ximo salto BGP",
+                        "value": "bgpnext"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(insrcmac) Endere\u00e7o MAC de origem de entrada",
+                        "value": "insrcmac"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(outdstmac) Endere\u00e7o MAC de destino de sa\u00edda",
+                        "value": "outdstmac"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(indstmac) Endere\u00e7o MAC de destino de entrada",
+                        "value": "indstmac"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(outsrcmac) Endere\u00e7o MAC de origem de sa\u00edda",
+                        "value": "outsrcmac"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(tos) Tipo de servi\u00e7o de origem",
+                        "value": "tos"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(srctos) Tipo de servi\u00e7o de origem",
+                        "value": "srctos"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(dsttos) Tipo de servi\u00e7o de destino",
+                        "value": "dsttos"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(mpls1) R\u00f3tulo MPLS 1",
+                        "value": "mpls1"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(mpls2) R\u00f3tulo MPLS 2",
+                        "value": "mpls2"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(mpls3) R\u00f3tulo MPLS 3",
+                        "value": "mpls3"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(mpls4) R\u00f3tulo MPLS 4",
+                        "value": "mpls4"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(mpls5) R\u00f3tulo MPLS 5",
+                        "value": "mpls5"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(mpls6) R\u00f3tulo MPLS 6",
+                        "value": "mpls6"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(mpls7) R\u00f3tulo MPLS 7",
+                        "value": "mpls7"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(mpls8) R\u00f3tulo MPLS 8",
+                        "value": "mpls8"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(mpls9) R\u00f3tulo MPLS 9",
+                        "value": "mpls9"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(mpls10) R\u00f3tulo MPLS 10",
+                        "value": "mpls10"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(router) Endere\u00e7o IP do roteador exportador",
+                        "value": "router"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(xsrcip) Endere\u00e7o IP de origem alternado",
+                        "value": "xsrcip"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(xdstip) Endere\u00e7o IP de destino alternado",
+                        "value": "xdstip"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(xsrcport) Porta de origem alternada",
+                        "value": "xsrcport"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(xdstport) Porta de destino alternada",
+                        "value": "xdstport"
+                    }
+                ],
+                "query": "(none) N\u00e3o agrupar : none, (srcip) Endere\u00e7o IP de origem : srcip, (dstip) Endere\u00e7o IP de destino : dstip, (srcip\\,dstip) Endere\u00e7o IP origem/destino : srcip\\,dstip, (proto) Protocolo IP : proto, (srcport) Porta de origem : srcport, (dstport) Porta de destino : dstport, (srcmask) M\u00e1scara de origem : srcmask, (dstmask) M\u00e1scara de destino : dstmask, (srcvlan) R\u00f3tulo VLAN de origem : srcvlan, (dstvlan) R\u00f3tulo VLAN de destino : dstvlan, (srcas) N\u00famero AS de origem : srcas, (dstas) N\u00famero AS de destino : dstas, (nextas) Pr\u00f3ximo AS do BGP : nextas, (prevas) AS anterior do BGP : prevas, (inif) N\u00famero da interface de entrada SNMP : inif, (outif) N\u00famero da interface de sa\u00edda SNMP : outif, (next) Pr\u00f3ximo salto IP : next, (bgpnext) Pr\u00f3ximo salto BGP : bgpnext, (insrcmac) Endere\u00e7o MAC de origem de entrada : insrcmac, (outdstmac) Endere\u00e7o MAC de destino de sa\u00edda : outdstmac, (indstmac) Endere\u00e7o MAC de destino de entrada : indstmac, (outsrcmac) Endere\u00e7o MAC de origem de sa\u00edda : outsrcmac, (tos) Tipo de servi\u00e7o de origem : tos, (srctos) Tipo de servi\u00e7o de origem : srctos, (dsttos) Tipo de servi\u00e7o de destino : dsttos, (mpls1) R\u00f3tulo MPLS 1 : mpls1, (mpls2) R\u00f3tulo MPLS 2 : mpls2, (mpls3) R\u00f3tulo MPLS 3 : mpls3, (mpls4) R\u00f3tulo MPLS 4 : mpls4, (mpls5) R\u00f3tulo MPLS 5 : mpls5, (mpls6) R\u00f3tulo MPLS 6 : mpls6, (mpls7) R\u00f3tulo MPLS 7 : mpls7, (mpls8) R\u00f3tulo MPLS 8 : mpls8, (mpls9) R\u00f3tulo MPLS 9 : mpls9, (mpls10) R\u00f3tulo MPLS 10 : mpls10, (router) Endere\u00e7o IP do roteador exportador : router, (xsrcip) Endere\u00e7o IP de origem alternado : xsrcip, (xdstip) Endere\u00e7o IP de destino alternado : xdstip, (xsrcport) Porta de origem alternada : xsrcport, (xdstport) Porta de destino alternada : xdstport",
+                "type": "custom"
+            },
+            {
+                "current": {
+                    "text": "bytes",
+                    "value": "bytes"
+                },
+                "description": "",
+                "includeAll": false,
+                "label": "Ordem:",
+                "name": "O",
+                "options": [
+                    {
+                        "selected": false,
+                        "text": "(flows) N\u00famero de fluxos",
+                        "value": "flows"
+                    },
+                    {
+                        "selected": true,
+                        "text": "(bytes) Bytes (entrada)",
+                        "value": "bytes"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(obyte) Bytes (sa\u00edda)",
+                        "value": "obyte"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(packets) Pacotes (entrada)",
+                        "value": "packets"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(opkg) Pacotes (sa\u00edda)",
+                        "value": "opkg"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(pps) Pacotes por segundo (entrada)",
+                        "value": "pps"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(opps) Pacotes por segundo (sa\u00edda): opps",
+                        "value": "(opps) Pacotes por segundo (sa\u00edda): opps"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(bps) Bytes por segundo (entrada)",
+                        "value": "bps"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(obps) Bytes por segundo (sa\u00edda)",
+                        "value": "obps"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(bpp) Bytes por pacote (entrada)",
+                        "value": "bpp"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(obpp) Bytes por pacote (sa\u00edda)",
+                        "value": "obpp"
+                    },
+                    {
+                        "selected": false,
+                        "text": "(duration) Dura\u00e7\u00e3o dos fluxos",
+                        "value": "duration"
+                    }
+                ],
+                "query": "(flows) N\u00famero de fluxos : flows, (bytes) Bytes (entrada) : bytes, (obyte) Bytes (sa\u00edda) : obyte, (packets) Pacotes (entrada) : packets, (opkg) Pacotes (sa\u00edda) : opkg, (pps) Pacotes por segundo (entrada) : pps, (opps) Pacotes por segundo (sa\u00edda): opps, (bps) Bytes por segundo (entrada) : bps, (obps) Bytes por segundo (sa\u00edda) : obps, (bpp) Bytes por pacote (entrada) : bpp, (obpp) Bytes por pacote (sa\u00edda) : obpp, (duration) Dura\u00e7\u00e3o dos fluxos : duration",
+                "type": "custom"
+            },
+            {
+                "current": {
+                    "text": [
+                        "All"
+                    ],
+                    "value": [
+                        "$__all"
+                    ]
+                },
+                "datasource": {
+                    "type": "marcusolsson-json-datasource",
+                    "uid": ""
+                },
+                "definition": "",
+                "description": "",
+                "includeAll": true,
+                "label": "Interfaces:",
+                "multi": true,
+                "name": "interfaces",
+                "options": [],
+                "query": {
+                    "cacheDurationSeconds": 300,
+                    "experimentalVariableValueField": "filter",
+                    "fields": [
+                        {
+                            "jsonPath": "$.[name]"
+                        },
+                        {
+                            "jsonPath": "$.[filter]",
+                            "language": "jsonpath",
+                            "name": ""
+                        }
+                    ],
+                    "method": "GET",
+                    "queryParams": "",
+                    "urlPath": "/listinterfacesnmp/${source}"
+                },
+                "refresh": 1,
+                "regex": "",
+                "sort": 1,
+                "type": "query"
+            },
+            {
+                "current": {
+                    "text": "any",
+                    "value": "any"
+                },
+                "description": "https://doc.rrflow.com.br/filtros/",
+                "label": "Filtro manual:",
+                "name": "filtro",
+                "options": [
+                    {
+                        "selected": true,
+                        "text": "any",
+                        "value": "any"
+                    }
+                ],
+                "query": "any",
+                "type": "textbox"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-15m",
+        "to": "now"
+    },
+    "timepicker": {
+        "refresh_intervals": [
+            "5m",
+            "15m",
+            "30m",
+            "1h"
+        ]
+    },
+    "timezone": "",
+    "title": "An\u00e1lise - Filtro (Manual)",
+    "uid": "be3muvk8ahla8c",
+    "version": 16,
+    "weekStart": ""
+}
